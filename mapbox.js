@@ -10,7 +10,7 @@ $(function(){
     map.on('load', function () {
 
         $.ajax({
-            url:"http://localhost:8000/api.php",
+            url:"/api.php",
             type:"GET"
         }).done(function(res){
             var featureList = JSON.parse(res);
@@ -50,7 +50,7 @@ $(function(){
 
     });
 
-    $("#input_box").click(function(){
+    $("#clear").click(function(){
         $("#input_box").html("")
     })
 
