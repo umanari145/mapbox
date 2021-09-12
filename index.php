@@ -26,6 +26,7 @@ body { margin: 0; padding: 0; }
 </head>
 <body>
 <div id="map"></div>
+
 <div id="white_block">
     <div>
         <button id="clear">クリア</button>
