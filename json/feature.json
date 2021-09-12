@@ -16,6 +16,13 @@
         {
             "type": "Feature",
             "geometry": {
+                "type": "Point",
+                "coordinates": [140.04866581692448,35.707370553236345]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
                 "type": "Polygon",
                 "coordinates": [[
                     [140.049275,35.707581],

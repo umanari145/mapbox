@@ -15,6 +15,10 @@ http://localhost:8000
 - index.php エントリーポイント
 - json/feature.json JSONレコードを格納
 
+## geometry情報
+https://blog.tagbangers.co.jp/ja/2020/08/26/getting-started-geojson-with-mapbox
+
+
 ## azure
 https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli-macos
 
@@ -24,3 +28,6 @@ brew update && brew install azure-cli
 ```
 
 https://qiita.com/ume67026265/items/03b49f1531c6cd38a701
+
+
+

@@ -22,7 +22,7 @@ $(function(){
         function renderingMap(res)
         {
             // ポリゴン設定
-            map.addSource('polygon_sample', {
+            map.addSource('plot', {
                 type: 'geojson',
                 data: res
             });
@@ -30,14 +30,28 @@ $(function(){
             // スタイル設定
             map.addLayer({
                 "id": "polygon_sample",
-                "type": "fill",
-                "source": "polygon_sample",
+                "type":"fill",
+                "source": "plot",
                 "layout": {},
+                "filter": ['==', '$type', 'Polygon'],
                 "paint": {
                     'fill-color': '#E92D63',
-                    'fill-opacity': 0.4
+                    'fill-opacity': 0.4,
                 }
             });
+
+            map.addLayer({
+                "id": "pin_sample",
+                "type":"circle",
+                "source": "plot",
+                "layout": {},
+                "filter": ['==', '$type', 'Point'],
+                "paint": {
+                    'circle-color': '#e55e5e',
+                    'circle-radius': 10,
+                }
+            })
+            
         }
 
         map.on('click', (e) => {

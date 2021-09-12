@@ -11,6 +11,7 @@
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"></script>
 <style>
+
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 70%; }
 #white_block { 
