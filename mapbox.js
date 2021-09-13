@@ -16,7 +16,8 @@ $(function(){
             var featureList = JSON.parse(res);
             renderingMap(featureList);
         }).fail(function(res){
-            console.log(fail)
+            console.log("--fail--")
+            console.log(res)
         })
 
         function renderingMap(res)
@@ -60,12 +61,29 @@ $(function(){
             var latlon = "[" + lng + "," + lat + "]," + "<br>"
             $("#input_box").append(latlon);
         });
-
-
     });
 
     $("#clear").click(function(){
         $("#input_box").html("")
+    })
+
+
+    $("#kousin").click(function(){
+        map.getSource('plot').setData({
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [[
+                [140.0225466840701,35.69208292162499],
+                [140.02261111622886,35.69189976819858],
+                [140.0230420062971,35.691893226997095],
+                [140.02305408732724,35.6920992745885]
+              ]]
+            },
+            "properties": {
+              "marker-symbol": "cafe"
+            }
+        });
     })
 
 })
