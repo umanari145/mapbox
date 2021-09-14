@@ -35,20 +35,16 @@ body { margin: 0; padding: 0; }
         </div>
     </div>
     <div style="margin-top:20px;">
-        <textarea cols="50" rows="8"></textarea>
+        <textarea cols="50" rows="8" id="polygon_txt"></textarea>
         <div>
             <button id="update_polygon">ポリゴン作成</button>        
         </div>
     </div>
     <div style="margin-top:20px;">
-        <textarea cols="50" rows="2"></textarea>
+        <textarea cols="50" rows="2" id="pin_txt"></textarea>
         <div>
             <button id="update_pin">ピン作成</button>        
         </div>
-    </div>
-
-    <div>
-        <button id="kousin">更新</button>
     </div>
     
 </div>

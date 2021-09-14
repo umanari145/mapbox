@@ -1,4 +1,7 @@
+
 $(function(){
+    let featureList = null;
+
     mapboxgl.accessToken = 'pk.eyJ1IjoibWF0c3Vtb3RvLW5vcmlvIiwiYSI6ImNrcXA4M2E4ODBzMHUyd3IxaWJ2bzJ2bXMifQ.xIXNRnsx4lFOTRWYvskLwg';
     var map = new mapboxgl.Map({
         container: 'map', // container id
@@ -13,7 +16,7 @@ $(function(){
             url:"/api.php",
             type:"GET"
         }).done(function(res){
-            var featureList = JSON.parse(res);
+            featureList = JSON.parse(res);
             renderingMap(featureList);
         }).fail(function(res){
             console.log("--fail--")
@@ -68,22 +71,53 @@ $(function(){
     })
 
 
-    $("#kousin").click(function(){
-        map.getSource('plot').setData({
+    $("#update_polygon").click(function(){
+
+        let polygonTemplate = {
             "type": "Feature",
             "geometry": {
               "type": "Polygon",
-              "coordinates": [[
-                [140.0225466840701,35.69208292162499],
-                [140.02261111622886,35.69189976819858],
-                [140.0230420062971,35.691893226997095],
-                [140.02305408732724,35.6920992745885]
-              ]]
-            },
-            "properties": {
-              "marker-symbol": "cafe"
+              "coordinates": [
+              ]
+            }
+        }
+
+        let polygonRow = $("#polygon_txt").val() || '';
+
+        let addPolygon = []
+        polygonRow.split(',\n').forEach(v => {
+            let polygonPoint = [];
+            let v2 = v.replace("[", "").replace("]", "").split(",")
+            polygonPoint.push(v2[0]);
+            polygonPoint.push(v2[1]);
+            addPolygon.push(polygonPoint)            
+        });
+
+        polygonTemplate["geometry"]["coordinates"].push(addPolygon)
+        featureList.features.push(polygonTemplate)
+        map.getSource('plot').setData(featureList);
+    })
+
+    $("#update_pin").click(function(){
+
+        let pinTemplate = {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": null
+            }
+        }
+
+        let pinRow = $("#pin_txt").val() || '';
+        let addPin = [];
+        pinRow.replace("[", "").replace("]", "").split(',').forEach(v => {
+            if (v !== "" &&  v !== undefined) {
+                addPin.push(v)
             }
         });
+        pinTemplate.geometry.coordinates = addPin;
+        featureList.features.push(pinTemplate)
+        map.getSource('plot').setData(featureList);
     })
 
 })
