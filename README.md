@@ -32,12 +32,28 @@ https://qiita.com/ume67026265/items/03b49f1531c6cd38a701
 
 ## ローカルでのSQLSERVERの接続
 
-1.通常のwindows認証からSQLServer認証に切り替える(saユーザーでパスワード作成)<br>
+1.通常のSQLServerをPHPで使えるようにドライバーのダウンロード
+ダウンロードページ:https://docs.microsoft.com/ja-jp/sql/connect/php/download-drivers-php-sql-server?view=sql-server-ver15
+「Microsoft Drivers for PHP for SQL Server (Windows) のダウンロード」をクリックしてダウンロード
+→C:\xampp\php\extなどDDLがあるページでダウンロードファイルを実行し、php_pdo_sqlsrv_73_ts_x86.dllなどが回答されていることを確認<br>
+
+参考:https://codezine.jp/article/detail/5736s
+
+2:phpinfoからThreadセーフか否かを判断し、とphpのバージョンと同一のDDLファイルのextensionをphp.iniに記述<br>
+php7.4を使っていて、スレッドセーフなら以下を記載<br>
+extension=php_pdo_sqlsrv_74_ts_x64.dll<br>
+extension=php_sqlsrv_74_ts_x64.dll<br>
+参考:https://atmarkit.itmedia.co.jp/ait/articles/1810/23/news023.html<br>
+参考:https://docs.microsoft.com/ja-jp/sql/connect/php/loading-the-php-sql-driver?view=sql-server-ver15
+
+3:phpinfoでpdo_sqlsrvが有効化されていることを確認<br>
+参考:https://codezine.jp/article/detail/5736
+
+4.通常のwindows認証からSQLServer認証に切り替える(saユーザーでパスワード作成)<br>
 参考:https://www.purin-it.com/sqlserver-make-user
 
-1.対象のコンピューターによって拒否されたため、接続できませんでした・・のようなメッセージがでるので、ローカルPCのTCP解放をする
-1433固定でよいかと。
+5.対象のコンピューターによって拒否されたため、接続できませんでした・・のようなメッセージがでるので、ローカルPCのTCP解放(有効)をする。1433固定でよいかと。<br>
 参考:https://symfoware.blog.fc2.com/blog-entry-1385.html
 
-1.SQLSERVER側が動的IPだったりすることがあると上記の症状が解決されないので、ポートを1433固定する。
+6.SQLSERVER側が動的IPだったりすることがあると上記の症状が解決されないので、ポートを1433固定する。<br>
 参考:https://knowledge.autodesk.com/ja/support/vault-products/learn-explore/caas/sfdcarticles/sfdcarticles/JPN/How-to-configure-SQL-Server-to-use-a-static-port.html
