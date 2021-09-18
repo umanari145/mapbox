@@ -1,0 +1,21 @@
+{
+    "name": "matsumoto/mapbox",
+    "autoload": {
+        "psr-4": {
+            "Matsumoto\\Mapbox\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "matsumoto norio",
+            "email": "umanari145@gmail.com"
+        }
+    ],
+    "require": {
+        "j4mie/idiorm": "^1.5",
+        "vlucas/phpdotenv": "^5.3",
+        "monolog/monolog": "^2.3",
+        "emonkak/underbar.php": "^0.3.0",
+        "emonkak/collection": "^2.0"
+    }
+}

@@ -1,0 +1,6 @@
+DB_DSN=sqlsrv
+DB_HOST=自分のPCのコンピューター名\SQLEXPRESS
+DB_NAME=sample_db
+DB_PORT=1433
+DB_USER=sa
+DB_PASS=password
