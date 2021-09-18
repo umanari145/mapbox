@@ -30,17 +30,18 @@ brew update && brew install azure-cli
 https://qiita.com/ume67026265/items/03b49f1531c6cd38a701
 
 
-## ローカルでのSQLSERVERの接続
+## ローカルでのSQLSERVERの接続(SQLServer)
 
-1.通常のSQLServerをPHPで使えるようにドライバーのダウンロード
-ダウンロードページ:https://docs.microsoft.com/ja-jp/sql/connect/php/download-drivers-php-sql-server?view=sql-server-ver15
+1.通常のSQLServerをPHPで使えるように以下のページからドライバーのダウンロード<br>
+https://docs.microsoft.com/ja-jp/sql/connect/php/download-drivers-php-sql-server?view=sql-server-ver15
 「Microsoft Drivers for PHP for SQL Server (Windows) のダウンロード」をクリックしてダウンロード
-→C:\xampp\php\extなどDDLがあるページでダウンロードファイルを実行し、php_pdo_sqlsrv_73_ts_x86.dllなどが回答されていることを確認<br>
+→C:\xampp\php\extなどDDLがあるページでダウンロードファイルを実行し、php_pdo_sqlsrv_73_ts_x86.dllなどが展開されていることを確認<br>
 
 参考:https://codezine.jp/article/detail/5736s
 
 2:phpinfoからThreadセーフか否かを判断し、とphpのバージョンと同一のDDLファイルのextensionをphp.iniに記述<br>
 php7.4を使っていて、スレッドセーフなら以下を記載<br>
+例<br>
 extension=php_pdo_sqlsrv_74_ts_x64.dll<br>
 extension=php_sqlsrv_74_ts_x64.dll<br>
 参考:https://atmarkit.itmedia.co.jp/ait/articles/1810/23/news023.html<br>
