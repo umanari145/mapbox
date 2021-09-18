@@ -38,12 +38,14 @@ body { margin: 0; padding: 0; }
         <textarea cols="50" rows="8" id="polygon_txt"></textarea>
         <div>
             <button id="update_polygon">ポリゴン作成</button>        
+            <button id="persist_polygon" style="margin-left:20px;">ポリゴン更新</button>
         </div>
     </div>
     <div style="margin-top:20px;">
         <textarea cols="50" rows="2" id="pin_txt"></textarea>
         <div>
             <button id="update_pin">ピン作成</button>        
+            <button id="persist_pin" style="margin-left:20px;">ピン更新</button>
         </div>
     </div>
     

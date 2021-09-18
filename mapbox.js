@@ -7,7 +7,7 @@ $(function(){
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/streets-v11', // style URL
         center: [140.0205937617735,35.6917560333537], // starting position
-        zoom: 18 // starting zoom
+        zoom: 16 // starting zoom
     });
 
     map.on('load', function () {
@@ -72,7 +72,38 @@ $(function(){
 
 
     $("#update_polygon").click(function(){
+        makeUpdatePolygon();
+        map.getSource('plot').setData(featureList);
+    })
 
+    $("#persist_polygon").click(function(){
+        makeUpdatePolygon();
+        updateGeoJson();
+    })
+
+    function updateGeoJson()
+    {
+        $.ajax({
+            url:'/update_geojson.php',
+            type:'POST',
+            data:JSON.stringify({
+                'featureList':featureList
+            }),
+            contentType: 'application/json',
+        })
+        .done((res) => {
+            alert("無事に更新しました。")
+        })
+        .fail((res) => {
+            alert("処理に失敗しました。")
+        }).always((res) => {
+            map.getSource('plot').setData(featureList);
+            console.log("処理終了です。")
+        });
+    }
+
+    function makeUpdatePolygon()
+    {
         let polygonTemplate = {
             "type": "Feature",
             "geometry": {
@@ -94,12 +125,21 @@ $(function(){
         });
 
         polygonTemplate["geometry"]["coordinates"].push(addPolygon)
-        featureList.features.push(polygonTemplate)
+        featureList.features.push(polygonTemplate)       
+    }
+
+    $("#update_pin").click(function(){
+        makeUpdatePin();
         map.getSource('plot').setData(featureList);
     })
 
-    $("#update_pin").click(function(){
+    $("#persist_pin").click(function(){
+        makeUpdatePin();
+        updateGeoJson();
+    })
 
+    function makeUpdatePin()
+    {
         let pinTemplate = {
             "type": "Feature",
             "geometry": {
@@ -117,8 +157,6 @@ $(function(){
         });
         pinTemplate.geometry.coordinates = addPin;
         featureList.features.push(pinTemplate)
-        map.getSource('plot').setData(featureList);
-    })
-
+    }
 })
  
