@@ -1,13 +1,15 @@
 <?php
 
+/*require_once __DIR__ . "./entry.php";
+require_once __DIR__ . "./Service/StoreService.php";
 
-require_once __DIR__ . "./entry.php";
-require_once __DIR__ . "/libs/Database.php";
+$logUtil = new LogUtil();
+$database = new Database($logUtil);
 
-$db = new Database();
-$db->select();
-
+$storeService = new StoreService($logUtil, $database);
+var_dump($storeService->getStore());
 exit();
+*/
 $features = json_decode(file_get_contents("json/feature.json"), true);
 
 
