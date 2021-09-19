@@ -22,6 +22,9 @@ body { margin: 0; padding: 0; }
     width: 30%; 
     padding: 30px 0 0 40px;
 }
+.mapboxgl-popup {
+    max-width: 400px;
+}
 </style>
 </head>
 <body>

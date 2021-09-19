@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * テスト用のツール
+ * 
+ * 
+ */
 require_once __DIR__ . "./entry.php";
 require_once __DIR__ . "/Service/StoreService.php";
 

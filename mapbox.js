@@ -10,7 +10,10 @@ $(function(){
         zoom: 16 // starting zoom
     });
 
+    const popUp = new mapboxgl.Popup();
+
     map.on('load', function () {
+
 
         $.ajax({
             url:"/api.php",
@@ -43,7 +46,7 @@ $(function(){
                     'fill-opacity': 0.4,
                 }
             });
-
+          
             map.addLayer({
                 "id": "pin_sample",
                 "type":"circle",
@@ -55,7 +58,6 @@ $(function(){
                     'circle-radius': 10,
                 }
             })
-            
         }
 
         map.on('click', (e) => {
@@ -64,12 +66,47 @@ $(function(){
             var latlon = "[" + lng + "," + lat + "]," + "<br>"
             $("#input_box").append(latlon);
         });
+
+        map.on('click', 'polygon_sample', (e) => {
+            setPopUp(e , 'polygon');
+        });
+
+        map.on('click', 'pin_sample', (e) => {
+            setPopUp(e, 'pin');
+        });
+
+        function setPopUp(e, polyType)
+        {
+            let coordinates;
+            if (polyType === 'pin') {
+                coordinates = e.features[0].geometry.coordinates;
+            } else if (polyType === 'polygon') {
+                let pointArr = e.features[0].geometry.coordinates[0].slice();
+                coordinates = pointArr[0];
+            }
+            let prop = e.features[0].properties;          
+            let html =`
+                ${prop.store_name}<br>           
+                <button id="delete_${prop.id}" class="delete_geo">削除</button>
+`            
+            popUp.setLngLat(coordinates)
+                 .setHTML(html)
+                 .addTo(map);
+        }      
+
     });
 
     $("#clear").click(function(){
         $("#input_box").html("")
+        
     })
 
+    $(document).on("click", ".delete_geo", function(){
+        if (confirm("削除してよいでしょうか?")) {
+            let id = $(this).attr("id").split("_")[1];
+            deleteGeoJson(id);
+        }
+    })
 
     $("#update_polygon").click(function(){
         makeUpdatePolygon();
@@ -102,6 +139,42 @@ $(function(){
         });
     }
 
+    function deleteGeoJson(id)
+    {
+
+        $.ajax({
+            url:'/delete_geojson.php',
+            type:'POST',
+            data:{
+                'id':id
+            },
+            contentType:'application/x-www-form-urlencoded',
+            dataType: 'json'
+        })
+        .done((res) => {
+            if (res['res'] == true) { 
+                alert("削除に成功しました。")
+                let features = featureList.features.filter(function(v){
+                    return v.properties.id != id
+                })
+                popUp.remove()
+                featureList.features = features;
+                map.getSource('plot').setData(featureList);
+            } else {
+                alert("削除に失敗しました。");                
+            }
+        })
+        .fail((XMLHttpRequest, textStatus, errorThrown) => {
+            console.log("XMLHttpRequest : " + XMLHttpRequest.status);
+            console.log("textStatus     : " + textStatus);
+            console.log("errorThrown    : " + errorThrown.message);
+            alert("削除に失敗しました。")
+        }).always((res) => {
+            alert("処理終了です。")
+        });
+    }
+
+    /*
     function makeUpdatePolygon()
     {
         let polygonTemplate = {
@@ -126,19 +199,19 @@ $(function(){
 
         polygonTemplate["geometry"]["coordinates"].push(addPolygon)
         featureList.features.push(polygonTemplate)       
-    }
+    }*/
 
     $("#update_pin").click(function(){
-        makeUpdatePin();
-        map.getSource('plot').setData(featureList);
+        //makeUpdatePin();
+        //map.getSource('plot').setData(featureList);
     })
 
     $("#persist_pin").click(function(){
-        makeUpdatePin();
-        updateGeoJson();
+        //makeUpdatePin();
+        //updateGeoJson();
     })
 
-    function makeUpdatePin()
+    /*function makeUpdatePin()
     {
         let pinTemplate = {
             "type": "Feature",
@@ -157,6 +230,6 @@ $(function(){
         });
         pinTemplate.geometry.coordinates = addPin;
         featureList.features.push(pinTemplate)
-    }
+    }*/
 })
  

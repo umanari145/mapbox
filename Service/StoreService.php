@@ -54,7 +54,11 @@ class StoreService
             $geometry = geoPHP::load($eachData['store_position'], 'wkt');
             $polyType = $geometry->geometryType();
             $cordinates = $geometry->asArray();
-            $items[] = $this->convertGeo($polyType, $cordinates, ['store_name' => $eachData['store_name']]);
+            $properties = [
+                'id' => $eachData['id'],
+                'store_name' => $eachData['store_name']
+            ];
+            $items[] = $this->convertGeo($polyType, $cordinates, $properties);
         }
 
         $features = [
@@ -72,8 +76,8 @@ class StoreService
             "geometry" => [
                 "type" => $polyType,
                 "coordinates" => $cordinates,
-                "properties" => $properties
-            ]
+            ],
+            "properties" => $properties
         ];
         return $eachGeo;
     }
@@ -90,6 +94,20 @@ class StoreService
         } catch (Exception $e) {
             $this->logUtil->error_logger->error(sprintf('DBエラーメッセージ::%s', $e->getMessage()));
             $this->logUtil->error_logger->error(sprintf('stack_trace::%s', $e->getTraceAsString()));
+        }
+    }
+
+    public function deleteStore(string $deleteId): bool
+    {
+        try {
+            $person = ORM::for_table('store')
+            ->where_equal('id', $deleteId)
+            ->delete_many();
+            return true;
+        } catch (Exception $e) {
+            $this->logUtil->error_logger->error(sprintf('DBエラーメッセージ::%s', $e->getMessage()));
+            $this->logUtil->error_logger->error(sprintf('stack_trace::%s', $e->getTraceAsString()));
+            return false;
         }
     }
 
