@@ -13,8 +13,9 @@ if (!empty($deleteId)) {
     $res = $storeService->deleteStore($deleteId);
     if ($res) {
         echo json_encode([
-            'res' => true
-        ]);
+            'res' => true,
+            'data' => $storeService->getJson()
+        ], JSON_UNESCAPED_UNICODE);
     } else {
         echo json_encode([
             'res' => false

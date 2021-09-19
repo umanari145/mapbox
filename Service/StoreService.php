@@ -17,7 +17,7 @@ class StoreService
         $this->resMode = $resMode;
     }
 
-    public function getJson():string
+    public function getJson():array
     {
         $data = null;
         switch ($this->resMode) {
@@ -30,7 +30,7 @@ class StoreService
                 break;
         }
 
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
+        return $data;
     }
 
     public function loadGeoJson()
@@ -59,7 +59,7 @@ class StoreService
                     break;
             }
         }
-        return json_encode(['res' => $res], JSON_UNESCAPED_UNICODE);
+        return json_encode(['res' => $res, 'data' => $this->getJson()], JSON_UNESCAPED_UNICODE);
     }
 
     private function insertGeoJsonDB(array $geoJson):bool

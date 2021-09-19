@@ -8,4 +8,5 @@ $logUtil = new LogUtil();
 $database = new Database($logUtil);
 
 $storeService = new StoreService($logUtil, $database);
-echo $storeService->getJson();
+$data = $storeService->getJson();
+echo json_encode($data, JSON_UNESCAPED_UNICODE);

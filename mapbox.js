@@ -132,6 +132,7 @@ $(function(){
         .done((res) => {
             if (res['res'] === true) {
                 //更新したのでsetする
+                featureList = res['data'];
                 map.getSource('plot').setData(featureList);
                 alert("更新が成功しました。")
             } else {
@@ -162,11 +163,8 @@ $(function(){
         .done((res) => {
             if (res['res'] == true) { 
                 alert("削除に成功しました。")
-                let features = featureList.features.filter(function(v){
-                    return v.properties.id != id
-                })
-                popUp.remove()
-                featureList.features = features;
+                popUp.remove();
+                featureList = res['data'];
                 map.getSource('plot').setData(featureList);
             } else {
                 alert("削除に失敗しました。");                
