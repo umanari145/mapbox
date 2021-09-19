@@ -26,5 +26,20 @@ class StoreService
         }
     }
 
-    
+    public function insertStore(array $sqlHashList)
+    {
+        try {
+            foreach ($sqlHashList as $eachGeo) {
+                $store = ORM::for_table('store')->create();
+                $store->geometry_type = $eachGeo['geometry_type'];
+                $store->set_expr('store_position', $eachGeo['geometry']);
+                $store->save();
+            }
+        } catch (Exception $e) {
+            $this->logUtil->error_logger->error(sprintf('DBエラーメッセージ::%s', $e->getMessage()));
+            $this->logUtil->error_logger->error(sprintf('stack_trace::%s', $e->getTraceAsString()));
+        }
+    }
+
+
 }

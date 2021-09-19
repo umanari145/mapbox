@@ -30,7 +30,7 @@ brew update && brew install azure-cli
 https://qiita.com/ume67026265/items/03b49f1531c6cd38a701
 
 
-## ローカルでのSQLSERVERの接続(SQLServer)
+## ローカルでのSQLSERVERの接続
 
 1.通常のSQLServerをPHPで使えるように以下のページからドライバーのダウンロード<br>
 https://docs.microsoft.com/ja-jp/sql/connect/php/download-drivers-php-sql-server?view=sql-server-ver15
