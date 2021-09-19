@@ -18,12 +18,14 @@ $(function(){
         $.ajax({
             url:"/api.php",
             type:"GET"
-        }).done(function(res){
-            featureList = JSON.parse(res);
-            renderingMap(featureList);
-        }).fail(function(res){
-            console.log("--fail--")
-            console.log(res)
+        }).done((res) => {
+            featureList = res;
+            renderingMap(res);
+        }).fail((XMLHttpRequest, textStatus, errorThrown) =>{
+            console.log("XMLHttpRequest : " + XMLHttpRequest.status);
+            console.log("textStatus     : " + textStatus);
+            console.log("errorThrown    : " + errorThrown.message);
+            alert("API読み込みに失敗しました。")
         })
 
         function renderingMap(res)
@@ -114,34 +116,40 @@ $(function(){
     })
 
     $("#persist_polygon").click(function(){
-        makeUpdatePolygon();
-        updateGeoJson();
+        let geoTemplate = makeUpdatePolygon();
+        updateGeoJson(geoTemplate);
     })
 
-    function updateGeoJson()
+    function updateGeoJson(geoTemplate)
     {
         $.ajax({
             url:'/update_geojson.php',
             type:'POST',
-            data:JSON.stringify({
-                'featureList':featureList
-            }),
-            contentType: 'application/json',
+            contentType:'application/x-www-form-urlencoded',
+            data:geoTemplate,
+            dataType: 'json'
         })
         .done((res) => {
-            alert("無事に更新しました。")
+            if (res['res'] === true) {
+                //更新したのでsetする
+                map.getSource('plot').setData(featureList);
+                alert("更新が成功しました。")
+            } else {
+                alert("更新に失敗しました。")
+            }
         })
-        .fail((res) => {
-            alert("処理に失敗しました。")
+        .fail((XMLHttpRequest, textStatus, errorThrown) => {
+            console.log("XMLHttpRequest : " + XMLHttpRequest.status);
+            console.log("textStatus     : " + textStatus);
+            console.log("errorThrown    : " + errorThrown.message);
+            alert("更新に失敗しました。")
         }).always((res) => {
-            map.getSource('plot').setData(featureList);
             console.log("処理終了です。")
         });
     }
 
     function deleteGeoJson(id)
     {
-
         $.ajax({
             url:'/delete_geojson.php',
             type:'POST',
@@ -174,7 +182,7 @@ $(function(){
         });
     }
 
-    /*
+    
     function makeUpdatePolygon()
     {
         let polygonTemplate = {
@@ -198,20 +206,21 @@ $(function(){
         });
 
         polygonTemplate["geometry"]["coordinates"].push(addPolygon)
-        featureList.features.push(polygonTemplate)       
-    }*/
+        featureList.features.push(polygonTemplate)
+        return polygonTemplate;
+    }
 
     $("#update_pin").click(function(){
-        //makeUpdatePin();
-        //map.getSource('plot').setData(featureList);
+        makeUpdatePin();
+        map.getSource('plot').setData(featureList);
     })
 
     $("#persist_pin").click(function(){
-        //makeUpdatePin();
-        //updateGeoJson();
+        let geoTemplate = makeUpdatePin();
+        updateGeoJson(geoTemplate);
     })
 
-    /*function makeUpdatePin()
+    function makeUpdatePin()
     {
         let pinTemplate = {
             "type": "Feature",
@@ -230,6 +239,7 @@ $(function(){
         });
         pinTemplate.geometry.coordinates = addPin;
         featureList.features.push(pinTemplate)
-    }*/
+        return pinTemplate;
+    }
 })
  
