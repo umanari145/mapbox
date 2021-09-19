@@ -8,22 +8,74 @@ class StoreService
 
     private $database;
 
-    public function __construct(LogUtil $logUtil, Database $database)
+    private $resMode;
+
+    public function __construct(LogUtil $logUtil, Database $database, string $resMode = "database")
     {
         $this->logUtil = $logUtil;
         $this->database = $database;
+        $this->resMode = $resMode;
     }
 
-    public function getStore()
+    public function getJson():string
+    {
+        $data = null;
+        switch ($this->resMode) {
+            case 'database':
+                $data = $this->getStore();
+                break;
+            case 'file':
+                $data = file_get_contents("json/feature.json");
+                $data = json_decode($data, true);
+                break;
+        }
+
+        return json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getStore(): array
     {
         try {
-            $query = ORM::for_table('store')->select_many('id', 'store_name');
-            $datas = $query->find_array();
-            return $datas;
+            $query = ORM::for_table('store')
+                ->raw_query('SELECT id,store_name,geometry_type,store_position.STAsText() as store_position FROM store');
+            $data = $query->find_array();
+            $convArr = $this->parseGeoData($data);
+            return $convArr;
         } catch (Exception $e) {
             $this->logUtil->error_logger->error(sprintf('DBエラーメッセージ::%s', $e->getMessage()));
             $this->logUtil->error_logger->error(sprintf('stack_trace::%s', $e->getTraceAsString()));
         }
+    }
+
+    public function parseGeoData(array $data)
+    {
+        $items = [];
+        foreach ($data as $eachData) {
+            $geometry = geoPHP::load($eachData['store_position'], 'wkt');
+            $polyType = $geometry->geometryType();
+            $cordinates = $geometry->asArray();
+            $items[] = $this->convertGeo($polyType, $cordinates, ['store_name' => $eachData['store_name']]);
+        }
+
+        $features = [
+            "type" => "FeatureCollection",
+            "features" => $items
+        ];
+
+        return $features;
+    }
+
+    private function convertGeo(string $polyType, array $cordinates, array $properties): array
+    {
+        $eachGeo = [
+            "type" => "Feature",
+            "geometry" => [
+                "type" => $polyType,
+                "coordinates" => $cordinates,
+                "properties" => $properties
+            ]
+        ];
+        return $eachGeo;
     }
 
     public function insertStore(array $sqlHashList)

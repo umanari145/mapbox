@@ -16,6 +16,7 @@
         "vlucas/phpdotenv": "^5.3",
         "monolog/monolog": "^2.3",
         "emonkak/underbar.php": "^0.3.0",
-        "emonkak/collection": "^2.0"
+        "emonkak/collection": "^2.0",
+        "phayes/geophp": "^1.2"
     }
 }
