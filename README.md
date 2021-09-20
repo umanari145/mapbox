@@ -58,3 +58,16 @@ extension=php_sqlsrv_74_ts_x64.dll<br>
 
 6.SQLSERVER側が動的IPだったりすることがあると上記の症状が解決されないので、ポートを1433固定する。<br>
 参考:https://knowledge.autodesk.com/ja/support/vault-products/learn-explore/caas/sfdcarticles/sfdcarticles/JPN/How-to-configure-SQL-Server-to-use-a-static-port.html
+
+## laravel-mixを使ったビルド
+コマンドプロンプトでは動かないので、git bashかcygwinなどを使う
+以下コマンドでlaravel-mixのコマンドが見れる
+```
+./node_modules/laravel-mix/bin/cli.js --help 
+```
+
+watchコマンド
+```
+./node_modules/laravel-mix/bin/cli.js  --mix-config=webpack.mix.js watch
+
+```

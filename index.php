@@ -5,11 +5,6 @@
 <title>Display a map on a webpage</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
-<script
-  src="https://code.jquery.com/jquery-2.2.4.min.js"
-  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-  crossorigin="anonymous"></script>
 <style>
 
 body { margin: 0; padding: 0; }
@@ -72,6 +67,6 @@ body { margin: 0; padding: 0; }
     </div>
     
 </div>
-<script src="/mapbox.js"></script>
+<script src="/js/dist/app.js"></script>
 </body>
 </html>

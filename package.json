@@ -1,0 +1,28 @@
+{
+  "name": "mapbox-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "jquery": "^3.6.0",
+    "laravel-mix": "^6.0.31",
+    "mapbox": "^1.0.0-beta10",
+    "mapbox-gl": "^2.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node_modules/laravel-mix/bin/cli.js  --mix-config=webpack.mix.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umanari145/mapbox.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/umanari145/mapbox/issues"
+  },
+  "homepage": "https://github.com/umanari145/mapbox#readme"
+}

@@ -143,7 +143,6 @@ $(function(){
 
     $("#clear").click(function(){
         $("#input_box").html("")
-        
     })
 
     $(document).on("click", ".delete_geo", function(){
@@ -304,6 +303,7 @@ $(function(){
         poly.push(ldlalon);
         poly.push(rdlalon);
         poly.push(rulalon);
+        poly.push(lulalon);
 
         coordinates.push(poly);
 
