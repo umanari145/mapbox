@@ -7,16 +7,15 @@ $(function(){
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/streets-v11', // style URL
         center: [140.0205937617735,35.6917560333537], // starting position
-        zoom: 16 // starting zoom
+        zoom: 16// starting zoom
     });
 
     const popUp = new mapboxgl.Popup();
 
     map.on('load', function () {
 
-
         $.ajax({
-            url:"/api.php",
+            url:"/get_geojson.php",
             type:"GET"
         }).done((res) => {
             featureList = res;
@@ -27,6 +26,8 @@ $(function(){
             console.log("errorThrown    : " + errorThrown.message);
             alert("API読み込みに失敗しました。")
         })
+
+        rangeRendering();
 
         function renderingMap(res)
         {
@@ -61,6 +62,7 @@ $(function(){
                 }
             })
         }
+
 
         map.on('click', (e) => {
             const lat = e.lngLat.lat;
@@ -97,6 +99,47 @@ $(function(){
         }      
 
     });
+
+    function rangeRendering()
+    {
+        map.addSource("range", {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: null
+                }
+            }
+        });
+
+        map.addLayer({
+            "id": "square",
+            "type":"fill",
+            "source": "range",
+            "layout": {},
+            "filter": ['==', '$type', 'Polygon'],
+            "paint": {
+                'fill-color': '#008000',
+                'fill-opacity': 0.4,
+            }
+        });
+
+        map.addLayer({
+            "id": "circle",
+            "type": "circle",
+            "source": "range",
+            "layout": {},
+            "filter": ['==', '$type', 'Point'],
+            "paint": {
+                'circle-color': '#008000',
+                //zoom=16のときほぼmに相当
+                'circle-radius': 300,
+                'circle-opacity':0.4
+            }
+        })
+
+    }
 
     $("#clear").click(function(){
         $("#input_box").html("")
@@ -193,16 +236,7 @@ $(function(){
         }
 
         let polygonRow = $("#polygon_txt").val() || '';
-
-        let addPolygon = []
-        polygonRow.split(',\n').forEach(v => {
-            let polygonPoint = [];
-            let v2 = v.replace("[", "").replace("]", "").split(",")
-            polygonPoint.push(v2[0]);
-            polygonPoint.push(v2[1]);
-            addPolygon.push(polygonPoint)            
-        });
-
+        let addPolygon = makeCordinates('Polygon', polygonRow);
         polygonTemplate["geometry"]["coordinates"].push(addPolygon)
         featureList.features.push(polygonTemplate)
         return polygonTemplate;
@@ -229,15 +263,98 @@ $(function(){
         }
 
         let pinRow = $("#pin_txt").val() || '';
-        let addPin = [];
-        pinRow.replace("[", "").replace("]", "").split(',').forEach(v => {
-            if (v !== "" &&  v !== undefined) {
-                addPin.push(v)
-            }
-        });
+        let addPin = makeCordinates('Point', pinRow);
         pinTemplate.geometry.coordinates = addPin;
         featureList.features.push(pinTemplate)
         return pinTemplate;
+    }
+
+    $("#range_hanei").click(function(){      
+
+        let data = {
+            'range_type':'square',
+            'lulonlat':convertCoordinates('lulonlat'),
+            'rdlonlat':convertCoordinates('rdlonlat'),
+        };
+
+        makeRangeGeo();
+
+        $.ajax({
+            url:'/get_geojson.php',
+            type:'GET',
+            data:data,
+            contentType:'application/x-www-form-urlencoded',
+            dataType: 'json'
+        });
+    });
+
+    function makeRangeGeo()
+    {
+        let coordinates = []
+        let poly = [];
+        let v1 = $('input[name="lulonlat"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+        let v2 = $('input[name="rdlonlat"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+
+        let lulalon = [v1[0], v1[1]];
+        let ldlalon = [v1[0], v2[1]];
+        let rdlalon = [v2[0], v2[1]];
+        let rulalon = [v2[0], v1[1]];
+
+        poly.push(lulalon);
+        poly.push(ldlalon);
+        poly.push(rdlalon);
+        poly.push(rulalon);
+
+        coordinates.push(poly);
+
+        let polygonTemplate = {
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": coordinates
+            }
+        }
+
+        map.getSource('range').setData(polygonTemplate);
+    }
+
+    function convertCoordinates(inputName)
+    {   
+        let selector =`input[name="${inputName}"]`
+        let v = $(selector).val() || '';
+        let v2 = v.replace("[", "").replace("]", "").split(",")
+        let lu = {
+            'lon':v2[0],
+            'lat':v2[1]
+        };
+        return lu
+    }
+
+    function makeCordinates(type, coordinatesRow)
+    {
+
+        let addCoordinates = []
+        
+        switch (type) {
+            case 'Polygon':
+                coordinatesRow.split(',\n').forEach(v => {
+                    let polygonPoint = [];
+                    let v2 = v.replace("[", "").replace("]", "").split(",")
+                    polygonPoint.push(v2[0]);
+                    polygonPoint.push(v2[1]);
+                    addCoordinates.push(polygonPoint);         
+                });
+                break;
+            case 'Point':
+                coordinatesRow.replace("[", "").replace("]", "").split(',').forEach(v => {
+                    if (v !== "" &&  v !== undefined) {
+                        addCoordinates.push(v)
+                    }
+                });
+                break;
+        }
+
+        return addCoordinates;
     }
 })
  

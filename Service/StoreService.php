@@ -17,12 +17,12 @@ class StoreService
         $this->resMode = $resMode;
     }
 
-    public function getJson():array
+    public function getJson($params = null):array
     {
         $data = null;
         switch ($this->resMode) {
             case 'database':
-                $data = $this->getStore();
+                $data = $this->getStore($params);
                 break;
             case 'file':
                 $data = file_get_contents("json/feature.json");
@@ -108,30 +108,49 @@ class StoreService
         return $sqlData;
     }
 
-    public function getStore($type = 'select'): array
+    public function getStore($params = null): array
     {
         try {
-            $col;
-            switch ($type) {
-                case 'select':
-                    $col = 'id,store_name,geometry_type,store_position.STAsText() as store_position';
-                    $query = ORM::for_table('store')
-                        ->raw_query('SELECT ' . $col . ' FROM store');
-                    $data = $query->find_array();
-                    $data = $this->parseGeoData($data);
-                    break;
-                case 'max':
-                    $col = 'MAX(id) as max';
-                    $query = ORM::for_table('store')
-                        ->raw_query('SELECT ' . $col . ' FROM store');
-                    $data = $query->find_array();
-                    break;
-            }
+            $sql = $this->makeSQL($params);
+            $query = ORM::for_table('store')
+                ->raw_query($sql);
+            $data = $query->find_array();
+            $data = $this->parseGeoData($data);
             return $data;
         } catch (Exception $e) {
             $this->logUtil->error_logger->error(sprintf('DBエラーメッセージ::%s', $e->getMessage()));
             $this->logUtil->error_logger->error(sprintf('stack_trace::%s', $e->getTraceAsString()));
+            return [];
         }
+    }
+
+    public function makeSQL($params):string
+    {
+        $sql = <<< EOF
+        SELECT 
+          id,
+          store_name,
+          geometry_type,
+          store_position.STAsText() as store_position
+        FROM
+          store
+EOF;
+
+        if (!empty($params)) {
+            $rangeType;
+            $rangeType = @$params['range_type']?:'';
+            switch ($rangeType) {
+                case 'square':
+
+                    break;
+            }
+        }
+        return $sql;
+    }
+
+    public function makeGEO($params)
+    {
+        
     }
 
     public function parseGeoData(array $data)

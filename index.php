@@ -25,6 +25,9 @@ body { margin: 0; padding: 0; }
 .mapboxgl-popup {
     max-width: 400px;
 }
+.mini{
+    width:80%;
+}
 </style>
 </head>
 <body>
@@ -33,7 +36,7 @@ body { margin: 0; padding: 0; }
 <div id="white_block">
     <div>
         <button id="clear">クリア</button>
-        <div id="input_box" style="min-height:200px;">
+        <div id="input_box" style="min-height:150px;">
 
         </div>
     </div>
@@ -49,6 +52,22 @@ body { margin: 0; padding: 0; }
         <div>
             <button id="update_pin">ピン作成</button>        
             <button id="persist_pin" style="margin-left:20px;">ピン更新</button>
+        </div>
+    </div>
+
+    <div style="margin-top:20px;">
+        <input type="radio" name="range" value="1" id="range_1"><label for="range_1">四隅</label>
+        <input type="radio" name="range" value="2" id="range_2"><label for="range_2">円</label>
+        <div style="margin-top:10px;">
+            <div>
+                <label >左上</label><input type="text" name="lulonlat" value="" class="mini">
+            </div>
+            <div style="margin-top:10px;">
+                <label >右下</label><input type="text" name="rdlonlat" value="" class="mini">
+            </div>
+        <div>    
+        <div style="margin-top:10px;">
+            <button id="range_hanei">範囲反映</button>      
         </div>
     </div>
     
