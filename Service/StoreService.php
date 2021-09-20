@@ -64,8 +64,7 @@ class StoreService
 
     private function insertGeoJsonDB(array $geoJson):bool
     {
-        $max = $this->getStore('max');
-        $sqlData = $this->singleMakeGeometry($geoJson, $max[0]["max"]);
+        $sqlData = $this->singleMakeGeometry($geoJson);
         //変換処理が入ったときに追加
         //$this->makeSQLHashList([$sqlData]);
         return $this->insertStore([$sqlData]);
@@ -76,12 +75,12 @@ class StoreService
         $featuresList = $jsonData['features'];
         $sqlArr = [];
         foreach ($featuresList as $index => $feature) {
-            $sqlArr[] = $this->singleMakeGeometry($feature, $index);
+            $sqlArr[] = $this->singleMakeGeometry($feature);
         }
         return $sqlArr;
     }
 
-    private function singleMakeGeometry(array $feature, int $index): array
+    private function singleMakeGeometry(array $feature): array
     {
         $sqlData = null;
         switch ($feature['geometry']['type']) {
@@ -89,7 +88,6 @@ class StoreService
                 $geoPoint = $feature['geometry']['coordinates'];
                 $sqlData = [
                     'geometry_type' => 1,
-                    'store_name' => 'store_name_' . ($index + 1),
                     'geometry' => sprintf("geometry::STPointFromText('POINT(%s)', %d)", implode(" ", $geoPoint), 4326)
                 ];
                 break;
@@ -103,7 +101,6 @@ class StoreService
                 $startPoly[] = $v[0];
                 $sqlData = [
                     'geometry_type' => 2,
-                    'store_name' => 'store_name_' . ($index + 1),
                     'geometry' => sprintf("geometry::STPolyFromText('POLYGON((%s))', %d)", implode(",", $startPoly), 4326)
                 ];
                 break;
@@ -178,9 +175,13 @@ class StoreService
             foreach ($sqlHashList as $eachGeo) {
                 $store = ORM::for_table('store')->create();
                 $store->geometry_type = $eachGeo['geometry_type'];
-                $store->store_name = $eachGeo['store_name'];
                 $store->set_expr('store_position', $eachGeo['geometry']);
                 $store->save();
+
+                $storeName = sprintf("store_name_%s", $store->id);
+                $store->store_name = $storeName;
+                $store->save();
+
             }
             return true;
         } catch (Exception $e) {
