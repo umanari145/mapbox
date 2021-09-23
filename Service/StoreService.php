@@ -48,6 +48,7 @@ class StoreService
 
     public function addGeoJson(array $geoJson)
     {
+        $res = null;
         if (!empty($geoJson)) {
             switch ($this->resMode) {
                 case 'database':

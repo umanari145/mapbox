@@ -1,25 +1,37 @@
 
 import axios from "axios";
 import $ from "jquery";
-import mapboxUtil from "./mapboxUtil";
-
-const mu = new mapboxUtil();
 
 export default class main{
 
-    constructor(map) {
+    constructor(map, popUp, mu) {
         this.map = map;
         this.featureList = null;
         this.loadMapBox();
+        this.mu = mu;
+        this.popUp = popUp;
 
         //読み込み時に発動する処理
         $("#clear").click(() => {
             $("#input_box").html("")
         });
+
+        $("#clear").click(() => {
+            $("#input_box").html("")
+        });
+
+        $(document).on("click", ".delete_geo", (event) => {
+            if (confirm("削除してよいでしょうか?")) {
+                let id = $(event.currentTarget).attr("id").split("_")[1];
+                this.deleteGeoJson(id);
+            }
+        })
+    
+        this.updateGeometry();
+
     }
 
     loadMapBox() {
-        alert("本日は晴天なり")
         this.map.on('load', () => {
             axios.get('/get_geojson.php')
                  .then((res) => {
@@ -72,7 +84,7 @@ export default class main{
         });
 
         this.map.on('click', 'polygon_sample', (e) => {
-            setPopUp(e , 'polygon');
+            this.setPopUp(e , 'polygon');
         });
 
         this.map.on('click', 'pin_sample', (e) => {
@@ -93,7 +105,7 @@ export default class main{
             ${prop.store_name}<br>           
             <button id="delete_${prop.id}" class="delete_geo">削除</button>
 `            
-        popUp.setLngLat(coordinates)
+        this.popUp.setLngLat(coordinates)
              .setHTML(html)
              .addTo(this.map);
     }
@@ -101,15 +113,125 @@ export default class main{
     updateGeometry() {
 
         $("#update_polygon").click(() => {
-            makeUpdatePolygon();
-            map.getSource('plot').setData(featureList);
+            let polygonTemplate = this.mu.makeUpdatePolygon();
+            this.featureList.features.push(polygonTemplate)
+            this.map.getSource('plot').setData(this.featureList);
         })
     
         $("#persist_polygon").click(() => {
-            let geoTemplate = makeUpdatePolygon();
-            updateGeoJson(geoTemplate);
+            let geoTemplate = this.mu.makeUpdatePolygon();           
+            axios.post('/update_geojson.php', geoTemplate)
+                .then((data) => {
+                    if (data['data']['res'] === true) {
+                        //更新したのでsetする
+                        this.featureList = data['data']['data'];
+                        this.map.getSource('plot').setData(this.featureList);
+                        alert("更新が成功しました。")
+                    } else {
+                        alert("更新に失敗しました。")
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    alert("更新に失敗しました。");
+                })
+                .finally(()=> {
+                    console.log("処理終了です。");
+                });
+        });
+
+        $("#update_pin").click(function(){
+            let pinTemplate = this.mu.makeUpdatePin();
+            this.featureList.features.push(pinTemplate)
+            map.getSource('plot').setData(featureList);
         })
+    
+        $("#persist_pin").click(function(){
+            let geoTemplate = this.mu.makeUpdatePin();
+            axios.post('/update_geojson.php', geoTemplate)
+                .then((data) => {
+                    if (data['res'] === true) {
+                        //更新したのでsetする
+                        this.featureList = data['data'];
+                        this.map.getSource('plot').setData(this.featureList);
+                        alert("更新が成功しました。");
+                    } else {
+                        alert("更新に失敗しました。");
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    alert("更新に失敗しました。");
+                })
+                .finally(() => {
+                    alert("処理終了です。");
+                });
+        });
     }
+
+    deleteGeoJson(id) {
+        axios.post('/delete_geojson.php', {
+            'id':id
+        })
+        .then((res) => {
+            if (res['data']['res'] == true) {
+                alert("削除に成功しました。")
+                this.popUp.remove();
+                this.featureList = res['data']['data'];
+                this.map.getSource('plot').setData(this.featureList);
+            } else {
+                alert("削除に失敗しました。");
+            }
+        })
+        .catch((err) => {
+            alert("削除に失敗しました。")
+        })
+        .finally(() => {
+            alert("処理終了です。");
+        });
+    }
+
+    rangeRendering(){
+        this.map.addSource("range", {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: null
+                }
+            }
+        });
+
+        this.map.addLayer({
+            "id": "square",
+            "type":"fill",
+            "source": "range",
+            "layout": {},
+            "filter": ['==', '$type', 'Polygon'],
+            "paint": {
+                'fill-color': '#008000',
+                'fill-opacity': 0.4,
+            }
+        });
+
+        this.map.addLayer({
+            "id": "circle",
+            "type": "circle",
+            "source": "range",
+            "layout": {},
+            "filter": ['==', '$type', 'Point'],
+            "paint": {
+                'circle-color': '#008000',
+                //zoom=16のときほぼmに相当
+                'circle-radius': 300,
+                'circle-opacity':0.4
+            }
+        })
+
+    }
+
+
 
 
 }

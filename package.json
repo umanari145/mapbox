@@ -13,7 +13,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node_modules/laravel-mix/bin/cli.js  --mix-config=webpack.mix.js"
+    "dev": "./node_modules/laravel-mix/bin/cli.js  --mix-config=webpack.mix.js"
   },
   "repository": {
     "type": "git",
