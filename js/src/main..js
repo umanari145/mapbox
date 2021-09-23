@@ -26,9 +26,8 @@ export default class main{
                 this.deleteGeoJson(id);
             }
         })
-    
+        //更新系の処理の読み込み
         this.updateGeometry();
-
     }
 
     loadMapBox() {
@@ -40,7 +39,10 @@ export default class main{
                  }).catch((error) => {
                     console.log(error);
                     alert("API読み込みに失敗しました。")        
-                 })
+                 });
+
+             //円の反映
+            this.rangeRendering();
         });
     }
 
@@ -89,6 +91,39 @@ export default class main{
 
         this.map.on('click', 'pin_sample', (e) => {
             this.setPopUp(e, 'pin');
+        });
+    }
+    
+    rangeRendering(){
+
+        this.map.addSource("range", {
+            type: "geojson"
+        });
+
+        this.map.addLayer({
+            "id": "square",
+            "type":"fill",
+            "source": "range",
+            "layout": {},
+            "filter": ['==', '$type', 'Polygon'],
+            "paint": {
+                'fill-color': '#008000',
+                'fill-opacity': 0.4,
+            }
+        });
+
+        this.map.addLayer({
+            "id": "circle",
+            "type": "circle",
+            "source": "range",
+            "layout": {},
+            "filter": ['==', '$type', 'Point'],
+            "paint": {
+                'circle-color': '#008000',
+                //zoom=16のときほぼmに相当
+                'circle-radius': 300,
+                'circle-opacity':0.4
+            }
         });
     }
 
@@ -140,19 +175,19 @@ export default class main{
                 });
         });
 
-        $("#update_pin").click(function(){
+        $("#update_pin").click(() => {
             let pinTemplate = this.mu.makeUpdatePin();
             this.featureList.features.push(pinTemplate)
-            map.getSource('plot').setData(featureList);
+            this.map.getSource('plot').setData(this.featureList);
         })
     
-        $("#persist_pin").click(function(){
+        $("#persist_pin").click(() => {
             let geoTemplate = this.mu.makeUpdatePin();
             axios.post('/update_geojson.php', geoTemplate)
                 .then((data) => {
-                    if (data['res'] === true) {
+                    if (data['data']['res'] === true) {
                         //更新したのでsetする
-                        this.featureList = data['data'];
+                        this.featureList = data['data']['data'];
                         this.map.getSource('plot').setData(this.featureList);
                         alert("更新が成功しました。");
                     } else {
@@ -166,6 +201,19 @@ export default class main{
                 .finally(() => {
                     alert("処理終了です。");
                 });
+        });
+
+        $("#range_hanei").click(() => {      
+
+            //get用のクエリ
+            let data = {
+                'range_type':'square',
+                'lulonlat':this.mu.convertCoordinates('lulonlat'),
+                'rdlonlat':this.mu.convertCoordinates('rdlonlat'),
+            };
+    
+            let polygonTemplate = this.mu.makeRangeGeo();
+            this.map.getSource('range').setData(polygonTemplate);          
         });
     }
 
@@ -190,48 +238,5 @@ export default class main{
             alert("処理終了です。");
         });
     }
-
-    rangeRendering(){
-        this.map.addSource("range", {
-            type: "geojson",
-            data: {
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: null
-                }
-            }
-        });
-
-        this.map.addLayer({
-            "id": "square",
-            "type":"fill",
-            "source": "range",
-            "layout": {},
-            "filter": ['==', '$type', 'Polygon'],
-            "paint": {
-                'fill-color': '#008000',
-                'fill-opacity': 0.4,
-            }
-        });
-
-        this.map.addLayer({
-            "id": "circle",
-            "type": "circle",
-            "source": "range",
-            "layout": {},
-            "filter": ['==', '$type', 'Point'],
-            "paint": {
-                'circle-color': '#008000',
-                //zoom=16のときほぼmに相当
-                'circle-radius': 300,
-                'circle-opacity':0.4
-            }
-        })
-
-    }
-
-
-
 
 }
