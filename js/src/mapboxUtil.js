@@ -76,29 +76,44 @@ export default class mapboxUtil{
         return lu
     }
 
-    makeRangeGeo() {
-        let coordinates = []
-        let poly = [];
-        let v1 = $('input[name="lulonlat"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
-        let v2 = $('input[name="rdlonlat"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+    makeRangeGeo(rangeType) {
 
-        let lulalon = [v1[0], v1[1]];
-        let ldlalon = [v1[0], v2[1]];
-        let rdlalon = [v2[0], v2[1]];
-        let rulalon = [v2[0], v1[1]];
+        let coordinates = [];
+        let geoType;
+        switch (rangeType) {
+            case "1":
+                let poly = [];
+                let v1 = $('input[name="lulonlat"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+                let v2 = $('input[name="rdlonlat"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
 
-        poly.push(lulalon);
-        poly.push(ldlalon);
-        poly.push(rdlalon);
-        poly.push(rulalon);
-        poly.push(lulalon);
+                let lulalon = [v1[0], v1[1]];
+                let ldlalon = [v1[0], v2[1]];
+                let rdlalon = [v2[0], v2[1]];
+                let rulalon = [v2[0], v1[1]];
 
-        coordinates.push(poly);
+                poly.push(lulalon);
+                poly.push(ldlalon);
+                poly.push(rdlalon);
+                poly.push(rulalon);
+                poly.push(lulalon);
+                coordinates.push(poly);
+                geoType = "Polygon";
+                break;
+
+            case "2":
+                let circleDistance = $('input[name="distance"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+                let c1 = $('input[name="center"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+                coordinates = [
+                    c1[0],c1[1]
+                ];
+                geoType = "Point";
+                break;
+        }
 
         let polygonTemplate = {
             "type": "Feature",
             "geometry": {
-              "type": "Polygon",
+              "type": geoType,
               "coordinates": coordinates
             }
         }

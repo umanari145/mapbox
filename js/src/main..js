@@ -1,7 +1,6 @@
 
 import axios from "axios";
 import $ from "jquery";
-
 export default class main{
 
     constructor(map, popUp, mu) {
@@ -28,6 +27,8 @@ export default class main{
         })
         //更新系の処理の読み込み
         this.updateGeometry();
+
+        this.changeRangeInputArea();
     }
 
     loadMapBox() {
@@ -211,9 +212,9 @@ export default class main{
                 'lulonlat':this.mu.convertCoordinates('lulonlat'),
                 'rdlonlat':this.mu.convertCoordinates('rdlonlat'),
             };
-    
-            let polygonTemplate = this.mu.makeRangeGeo();
-            this.map.getSource('range').setData(polygonTemplate);          
+            
+            let geoTemplate = this.mu.makeRangeGeo($('input[name="range"]:checked').val());
+            this.map.getSource('range').setData(geoTemplate);
         });
     }
 
@@ -237,6 +238,20 @@ export default class main{
         .finally(() => {
             alert("処理終了です。");
         });
+    }
+
+    changeRangeInputArea() {
+        $(".range_input").change(() => {
+            if ($("#range_1").prop('checked')) {
+                $("#range_square").show();
+                $("#range_circle").hide();
+            }
+
+            if ($("#range_2").prop('checked')) {
+                $("#range_circle").show();                
+                $("#range_square").hide();
+            }
+        })
     }
 
 }

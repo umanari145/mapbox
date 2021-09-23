@@ -23,6 +23,10 @@ body { margin: 0; padding: 0; }
 .mini{
     width:80%;
 }
+
+#range_circle {
+    display:none;
+}
 </style>
 </head>
 <body>
@@ -51,16 +55,25 @@ body { margin: 0; padding: 0; }
     </div>
 
     <div style="margin-top:20px;">
-        <input type="radio" name="range" value="1" id="range_1"><label for="range_1">四隅</label>
-        <input type="radio" name="range" value="2" id="range_2"><label for="range_2">円</label>
-        <div style="margin-top:10px;">
+        <input type="radio" name="range" value="1" id="range_1" class="range_input" checked><label for="range_1">四隅</label>
+        <input type="radio" name="range" value="2" id="range_2" class="range_input"><label for="range_2">円</label>
+        <div style="margin-top:10px;" id="range_square">
             <div>
                 <label >左上</label><input type="text" name="lulonlat" value="" class="mini">
             </div>
             <div style="margin-top:10px;">
                 <label >右下</label><input type="text" name="rdlonlat" value="" class="mini">
             </div>
-        <div>    
+        </div>
+            
+        <div style="margin-top:10px;" id="range_circle">
+            <div>
+                <label >中心点</label><input type="text" name="center" value="" class="mini">
+            </div>
+            <div style="margin-top:10px;">
+                <label >半径(m)</label><input type="text" name="distance" value="" style="width:50px;">
+            </div>
+        </div>
         <div style="margin-top:10px;">
             <button id="range_hanei">範囲反映</button>      
         </div>
