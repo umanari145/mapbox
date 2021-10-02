@@ -105,8 +105,42 @@ class StoreService
                     'geometry' => sprintf("geometry::STPolyFromText('POLYGON((%s))', %d)", implode(",", $startPoly), 4326)
                 ];
                 break;
+            case 'MultiPolygon':
+                $geos = $feature['geometry']['coordinates'];
+                $multiPolygonStr = $this->makeMultiPolyStr($geos);
+                $sqlData = [
+                    'geometry_type' => 3,
+                    'geometry' => sprintf("geometry::STMPolyFromText('%s', %d)", $multiPolygonStr, 4326)
+                ];
+                break;
         }
         return $sqlData;
+    }
+
+    public function makeMultiPolyStr($geos): string
+    {
+        $multiPolygonArr = [];
+        foreach ($geos as $eachPolyList) {
+            $polygonStr = $this->makePolyArr($eachPolyList);
+            $multiPolygonArr[] = $polygonStr;
+        }
+        $multiPolygonStr = implode(",", $multiPolygonArr);
+        return sprintf('MULTIPOLYGON(%s)', $multiPolygonStr);
+    }
+
+    public function makePolyArr($polyList): string
+    {
+        $polyArr = [];
+        foreach ($polyList as $polygon) {
+            //これが1ポリゴン
+            $v2 = array_map(function ($v) {
+                return sprintf("%s", implode(" ", $v));
+            }, $polygon);
+            $nanoPolygon = sprintf('(%s)', implode(",", $v2));
+            $polyArr[] = $nanoPolygon;
+        }
+        $singlePolygon = implode(',', $polyArr);
+        return sprintf("(%s)", $singlePolygon);
     }
 
     public function getStore($params = null): array
