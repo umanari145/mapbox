@@ -10,10 +10,27 @@ php -S localhost:8000
 ブラウザから以下URLでアクセスすればOK<br>
 http://localhost:8000
 
+サーバーサイド
 - api.php JSONの吐き出し
-- mapbox.js 必要なJavaScriptファイル
+- entry.json
+- Service/StoreService.php 実質的なサービスライブラリ
+- libs/Database.php DBライブラリ
+- libs/LogUtil.php Monologのラッパー
+
+フロント
 - index.php エントリーポイント
-- json/feature.json JSONレコードを格納
+- js/dist app.js 成果物
+- js/index.js JSのエントリーポイント
+- js/main.js  イベント系の処理
+- js/mapboxUtil.js ジオメトリー情報のUtil系 
+- json/feature.json JSONレコードを格納(今は使わない・・・)
+
+JSから叩かれて実際にJSONを返す処理
+- get_geojson.php 通常の読み込み
+- get_geojson_test.php テスト的なライブラリ(画面に出す)
+- update_geojson.php ジオメトリー更新
+- delete_geojson.php ジオメトリー削除
+- insert_geojson.php ファイルからの読み込み
 
 ## geometry情報
 https://blog.tagbangers.co.jp/ja/2020/08/26/getting-started-geojson-with-mapbox
