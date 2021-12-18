@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "./entry.php";
+require_once __DIR__ . "/entry.php";
 require_once __DIR__ . "/Service/StoreService.php";
 
 header("Content-Type: application/json; charset=UTF-8");
