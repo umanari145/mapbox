@@ -12,7 +12,8 @@ http://localhost:8000
 
 サーバーサイド
 - api.php JSONの吐き出し
-- entry.json
+- .htaccess 独自のPHPの設定
+- entry.php エントリーポイント
 - Service/StoreService.php 実質的なサービスライブラリ
 - libs/Database.php DBライブラリ
 - libs/LogUtil.php Monologのラッパー
@@ -38,6 +39,29 @@ https://blog.tagbangers.co.jp/ja/2020/08/26/getting-started-geojson-with-mapbox
 
 ## azure
 https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli-macos
+
+### 開発環境
+以下の環境変数をauzreの管理画面からセットする
+DB_DSN=sqlsrv
+DB_HOST=DBサーバーのホスト名
+DB_NAME=DBサーバーのDB名
+DB_PORT=DBサーバーのDB名
+DB_USER=DBサーバーのパスワード(ローカルはsa)
+DB_PASS=DBサーバーのDB名(ローカルはpassword)
+
+### ローカル環境(環境変数の設定)
+
+php load_environment.php
+
+環境変数の読み込み
+```
+PowerShellで管理者権限で実行後、以下のコマンドを実行
+Set-ExecutionPolicy RemoteSigned
+./シェルのファイル名.ps1
+```
+
+参考URL
+https://qiita.com/tomoko523/items/df8e384d32a377381ef9
 
 インストール
 ```
@@ -80,6 +104,7 @@ extension=php_sqlsrv_74_ts_x64.dll<br>
 コマンドプロンプトでは動かないので、git bashかcygwinなどを使う
 以下コマンドでlaravel-mixのコマンドが見れる
 ```
+cd /C/xampp/htdocs/mapbox
 ./node_modules/laravel-mix/bin/cli.js --help 
 ```
 

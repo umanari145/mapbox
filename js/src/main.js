@@ -11,11 +11,11 @@ export default class main{
         this.popUp = popUp;
 
         //読み込み時に発動する処理
-        $("#clear").click(() => {
+        $("#clear").on('click', (e) => {
             $("#input_box").html("")
         });
 
-        $("#clear").click(() => {
+        $("#clear").on('click', (e) => {
             $("#input_box").html("")
         });
 
@@ -148,13 +148,13 @@ export default class main{
 
     updateGeometry() {
 
-        $("#update_polygon").click(() => {
+        $("#update_polygon").on('click', (e) => {
             let polygonTemplate = this.mu.makeUpdatePolygon();
             this.featureList.features.push(polygonTemplate)
             this.map.getSource('plot').setData(this.featureList);
         })
     
-        $("#persist_polygon").click(() => {
+        $("#persist_polygon").on('click',(e) => {
             let geoTemplate = this.mu.makeUpdatePolygon();           
             axios.post('/update_geojson.php', geoTemplate)
                 .then((data) => {
@@ -176,13 +176,13 @@ export default class main{
                 });
         });
 
-        $("#update_pin").click(() => {
+        $("#update_pin").on('click', (e) => {
             let pinTemplate = this.mu.makeUpdatePin();
             this.featureList.features.push(pinTemplate)
             this.map.getSource('plot').setData(this.featureList);
         })
     
-        $("#persist_pin").click(() => {
+        $("#persist_pin").on('click', (e) => {
             let geoTemplate = this.mu.makeUpdatePin();
             axios.post('/update_geojson.php', geoTemplate)
                 .then((data) => {
@@ -204,7 +204,7 @@ export default class main{
                 });
         });
 
-        $("#range_hanei").click(() => {      
+        $("#range_hanei").on('click',(e) => {      
 
             //get用のクエリ
             let data = {
@@ -241,7 +241,7 @@ export default class main{
     }
 
     changeRangeInputArea() {
-        $(".range_input").change(() => {
+        $(".range_input").on('change',(e) => {
             if ($("#range_1").prop('checked')) {
                 $("#range_square").show();
                 $("#range_circle").hide();

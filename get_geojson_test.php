@@ -12,5 +12,3 @@ $logUtil = new LogUtil();
 $database = new Database($logUtil);
 
 $storeService = new StoreService($logUtil, $database);
-
-var_dump($storeService->getStore());
