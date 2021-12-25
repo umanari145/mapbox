@@ -32,7 +32,9 @@ jobs:
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
       - name: generate setting conf
-        run: ./generateSetting.ps1 account01
+        run: |
+          pwd
+          ./generateSetting.ps1 account01
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
