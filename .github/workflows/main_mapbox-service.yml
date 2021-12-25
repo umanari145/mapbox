@@ -32,6 +32,7 @@ jobs:
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
       - name: powershell exe 
+        uses: PowerShell@2
         powershell: .\genereteSetting.ps1 account01
 
       - name: Upload artifact for deployment job
