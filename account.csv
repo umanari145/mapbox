@@ -1,0 +1,9 @@
+account	stage	region	type	url	db
+account01	easy	east	hyper	http://sample-easy-east-hyper.com	account01.easy
+account02	easy	west	hyper	http://sample-easy-west-hyper.com	account02.easy
+account03	easy	east	lower	http://sample-easy-east-lower.com	account03.easy
+account04	easy	west	hyper	http://sample-easy-west-hyper.com	account04.easy
+account05	hard	east	hyper	http://sample-hard-east-hyper.com	account05.hard
+account06	hard	west	hyper	http://sample-hard-west-hyper.com	account06.hard
+account07	hard	east	lower	http://sample-hard-east-lower.com	account07.hard
+account08	hard	west	hyper	http://sample-hard-west-hyper.com	account08.hard
