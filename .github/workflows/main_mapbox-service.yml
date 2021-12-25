@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - powershell: .\genereteSetting.ps1 account01
+    - PowerShell: .\genereteSetting.ps1 account01
 
   deploy:
     runs-on: ubuntu-latest
