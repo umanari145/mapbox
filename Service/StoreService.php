@@ -259,4 +259,46 @@ EOF;
         }
     }
 
+    public function insertDummyGeoJson(int $dataVolume)
+    {
+        try {
+            $this->makeDummyData($dataVolume);
+            return true;
+        } catch (Exception $e) {
+            $this->logUtil->error_logger->error(sprintf('DBエラーメッセージ::%s', $e->getMessage()));
+            $this->logUtil->error_logger->error(sprintf('stack_trace::%s', $e->getTraceAsString()));
+            return false;
+        }
+    }
+
+    private function makeDummyData(int $dataVolume)
+    {
+        $faker = \Faker\Factory::create();
+
+        $dataList = [];
+        for ($i = 1; $i <= $dataVolume; $i++) {
+            
+            $data = [
+                sprintf("'sample_store _%08d'", $i),
+                sprintf("'POINT(%s %s)'", $faker->longitude(139.7, 140.7), $faker->latitude(35.1, 35.7)),
+                1
+            ];
+
+            $dataList[] = sprintf("(%s)", implode(",", $data));
+            if (count($dataList) === 1000) {
+                $this->insertData($dataList);
+                $dataList = [];
+                echo "process $i\n";
+            }
+        }
+    }
+
+    private function insertData(array $dataList)
+    {
+        $columns = ["store_name", "store_position", "geometry_type"];
+        $sql = sprintf("INSERT INTO store (%s) VALUES %s", implode(",", $columns), implode(",", $dataList));
+        return ORM::raw_execute($sql);
+    }
+
+
 }

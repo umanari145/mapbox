@@ -17,6 +17,7 @@
         "monolog/monolog": "^2.3",
         "emonkak/underbar.php": "^0.3.0",
         "emonkak/collection": "^2.0",
-        "phayes/geophp": "^1.2"
+        "phayes/geophp": "^1.2",
+        "fzaninotto/faker": "^1.9"
     }
 }
