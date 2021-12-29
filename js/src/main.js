@@ -126,6 +126,7 @@ export default class main{
                 'circle-opacity':0.4
             }
         });
+
     }
 
     setPopUp(e, polyType){
@@ -206,6 +207,8 @@ export default class main{
 
         $("#range_hanei").on('click',(e) => {      
 
+            $('#sql_disp').html("");
+
             //get用のクエリ
             let data = {
                 'range_type':'square',
@@ -214,8 +217,17 @@ export default class main{
             };
             
             let geoTemplate = this.mu.makeRangeGeo($('input[name="range"]:checked').val());
+
             this.map.getSource('range').setData(geoTemplate);
+
+            this.mu.dispSQL();            
+
         });
+    }
+
+    loadCircleTerritory(hankei)
+    {
+
     }
 
     deleteGeoJson(id) {

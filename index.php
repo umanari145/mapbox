@@ -77,6 +77,9 @@ body { margin: 0; padding: 0; }
         <div style="margin-top:10px;">
             <button id="range_hanei">範囲反映</button>      
         </div>
+        <div style="margin-top:10px;" id="sql_disp">
+
+        </div>
     </div>
     
 </div>

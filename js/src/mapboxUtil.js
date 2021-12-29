@@ -80,6 +80,7 @@ export default class mapboxUtil{
 
         let coordinates = [];
         let geoType;
+        let geoTemplate = null;
         switch (rangeType) {
             case "1":
                 let poly = [];
@@ -98,26 +99,97 @@ export default class mapboxUtil{
                 poly.push(lulalon);
                 coordinates.push(poly);
                 geoType = "Polygon";
+
+                geoTemplate = {
+                    "type": "Feature",
+                    "geometry": {
+                      "type": geoType,
+                      "coordinates": coordinates
+                    }
+                };
+
                 break;
 
             case "2":
-                let circleDistance = $('input[name="distance"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
+                //今はまだ効かない
+                let circleDistance = $('input[name="distance"]').val();
                 let c1 = $('input[name="center"]').val().replace("[", "").replace("]", "").split(",").filter(function(v){return v !=='';});
                 coordinates = [
                     c1[0],c1[1]
                 ];
                 geoType = "Point";
+
+                geoTemplate = {
+                    "type": "Feature",
+                    "geometry": {
+                      "type": geoType,
+                      "coordinates": coordinates
+                    },
+                    "properties": {
+                        "radius": circleDistance
+                    }
+                };
                 break;
         }
 
-        let polygonTemplate = {
-            "type": "Feature",
-            "geometry": {
-              "type": geoType,
-              "coordinates": coordinates
-            }
+
+        return geoTemplate;
+    }
+
+    dispSQL() {
+        let type = null;
+        let extent = null;
+        let center = null;
+        if ($("#range_1").prop('checked')) {
+            type = '1';
+            let lulonlat = this.convertCoordinates('lulonlat');
+            let rdlonlat = this.convertCoordinates('rdlonlat');
+
+            extent = {
+                'lat1':lulonlat["lat"],
+                'lon1':lulonlat["lon"],
+                'lat2':rdlonlat["lat"],
+                'lon2':rdlonlat["lon"]
+            };
+
+            this.makeGeometory(type, extent, center)
+
+        } else if ($("#range_2").prop('checked')) {
+            type = '2';
+            let centerlonlat = this.convertCoordinates('center');
+            let hankei = $('input[name="distance"]').val() || '';
+
+            center = {
+                'lat':centerlonlat["lat"],
+                'lon':centerlonlat["lon"],
+                'hankei': hankei
+            };
+
+            this.makeGeometory(type, extent, center)
         }
-        return polygonTemplate;
+    }
+
+
+
+    makeGeometory(type, extent, center) {
+        let where = "";
+        switch (type) {
+            case '1'://extent
+                let lu = `${extent.lon1} ${extent.lat1}`;
+                let ld = `${extent.lon1} ${extent.lat2}`;
+                let ru = `${extent.lon2} ${extent.lat1}`;
+                let rd = `${extent.lon2} ${extent.lat2}`;
+                // makevalidがないと動かない環境あり
+                where = `geometry::STGeomFromText('POLYGON((${lu}, ${ld}, ${rd}, ${ru}, ${lu}))', 0).STIntersects(geometry::STGeomFromText(store_position.MakeValid().STAsText(), 0)) = 1`;
+                break;
+
+            case '2'://center
+                let point =`${center.lon} ${center.lat}`;
+                where = `geography::STGeomFromText('POINT(${point})', 4326).STDistance(geography::STGeomFromText(store_position.MakeValid().STAsText(), 4326)) < ${center.hankei}`
+                break;
+        }
+
+        $('#sql_disp').html(where);
     }
 
 }
